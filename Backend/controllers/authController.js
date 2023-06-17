@@ -1,6 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
-import User from "../models/user.js"
+import User from '../models/user.js';
+import nodemailer from 'nodemailer';
 
 // REGISTERING USER
 
@@ -42,23 +43,74 @@ export const register = async (req, res) => {
     }
 }
 
-// LOGGING IN 
-export const login = async (req, res) => {
-    const { email, password } = req.body;
-  
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+      type: 'OAuth2',
+      user: 'afanoroapp@gmail.com',
+      clientId: '789412747365-c5aj0vrnk4vsedap5m0rsm3hm5jgmu3v.apps.googleusercontent.com',
+      clientSecret: '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',
+      refreshToken: '1//04FMyOyHLHJhYCgYIARAAGAQSNwF-L9IrtKXc7YFHEtRW6_1XkLHUhCu22sJa2oTTgAJEgII2ErZzd6rECRpP6hu1soHXlRXwxS4',
+      
+  }
+  });
+export const sendcode = async (req, res) => {
+  const { userName, password } = req.body;
     try {
-      const user = await User.findOne({ email });
-      if (!user) return res.status(400).send("Invalid Email ");
+      const user = await User.findOne({ userName });
+      if (!user) return res.status(400).send("Invalid username ");
   
       const isMatch = await bcrypt.compare(password, user.password);
       if (!isMatch) return res.status(400).send("Invalid Password");
+      const email = user.email;
+      const verificationCode = Math.floor(100000 + Math.random() * 900000);
   
-      const payload = { id: user._id, email: user.email, role: user.role }; 
+      user.passwordResetCode = verificationCode;
+      await user.save();
+  
+      const mailOptions = {
+        from: "ztechguardian@gmail.com",
+        to: email,
+        subject: 'Verification Code', 
+        html: `
+          <h2>Hello ${user.firstName},</h2>
+          <p>You recently requested a verification code to login into your account. Please use the following verification code to log in.</p>
+          <h1>${verificationCode}</h1>
+          <p>Just enter the code in the field to log in</p>
+        `
+      };
+  
+      await transporter.sendMail(mailOptions);
+      console.log("message sent")
+  
+      res.json({ message: `Email sent to ${email} with further instructions.` });
+  
+    } catch (error) {
+      console.log(error); 
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  };
+
+// LOGGING IN 
+export const login = async (req, res) => {
+    const { userName, code } = req.body;
+  
+    try {
+      const user = await User.findOne({ userName });
+      if (!user) return res.status(400).send("Invalid username ");
+
+      // Verify verification code
+      if (user.passwordResetCode !== code) {
+        return res.status(400).json({ error: 'Invalid verification code.' });
+      }
+      user.passwordResetCode = null; 
+      await user.save();
+      const payload = { id: user._id, email: user.email}; 
       const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "2h" });
 
       res.cookie("token", token, { httpOnly: true, secure: true });
       res["token"] = token
-      res.status(200).json({ token , "role":payload.role});
+      res.status(200).json({ token, user });
       console.log("A user Logged in")
     } catch (error) {
       console.error(error.message);

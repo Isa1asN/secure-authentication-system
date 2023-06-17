@@ -13,7 +13,6 @@ app.use(bodyParser.json());
 // Auth related routes
 app.use('/auth', authRouter);
 
-
 // Profile route
 app.use('/api', profileRouter);
 
