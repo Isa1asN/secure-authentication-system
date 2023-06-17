@@ -47,10 +47,10 @@ const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
       type: 'OAuth2',
-      user: 'afanoroapp@gmail.com',
-      clientId: '789412747365-c5aj0vrnk4vsedap5m0rsm3hm5jgmu3v.apps.googleusercontent.com',
-      clientSecret: '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',
-      refreshToken: '1//04FMyOyHLHJhYCgYIARAAGAQSNwF-L9IrtKXc7YFHEtRW6_1XkLHUhCu22sJa2oTTgAJEgII2ErZzd6rECRpP6hu1soHXlRXwxS4',
+      user: 'ztechguardian@gmail.com',
+      clientId: '945059585802-klob9ikob3dvvgmlj8va3vfatv06r5gc.apps.googleusercontent.com',
+      clientSecret: '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',
+      refreshToken: '1//04AnrSYxgt5OGCgYIARAAGAQSNwF-L9IrTSq508d5Wg2owhDgpSUmt_J6NNESQ_bbyle1u2rPNp2Eq-HeNRterHLPNKujFP1CDrQ',
       
   }
   });
@@ -65,7 +65,7 @@ export const sendcode = async (req, res) => {
       const email = user.email;
       const verificationCode = Math.floor(100000 + Math.random() * 900000);
   
-      user.passwordResetCode = verificationCode;
+      user.verificationCode = verificationCode;
       await user.save();
   
       const mailOptions = {
@@ -98,12 +98,12 @@ export const login = async (req, res) => {
     try {
       const user = await User.findOne({ userName });
       if (!user) return res.status(400).send("Invalid username ");
-
       // Verify verification code
-      if (user.passwordResetCode !== code) {
+      if (user.verificationCode !== code) {
         return res.status(400).json({ error: 'Invalid verification code.' });
       }
-      user.passwordResetCode = null; 
+      else {
+      user.verificationCode = null; 
       await user.save();
       const payload = { id: user._id, email: user.email}; 
       const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: "2h" });
@@ -111,7 +111,7 @@ export const login = async (req, res) => {
       res.cookie("token", token, { httpOnly: true, secure: true });
       res["token"] = token
       res.status(200).json({ token, user });
-      console.log("A user Logged in")
+      console.log("A user Logged in")}
     } catch (error) {
       console.error(error.message);
       res.status(500).send("Server Error");
