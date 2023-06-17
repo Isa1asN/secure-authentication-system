@@ -14,6 +14,13 @@ const UserSchema = new mongoose.Schema(
             min:3,
             max:50
         },
+        userName :{
+            type: String,
+            required: true,
+            min:3,
+            max:50,
+            unique:true
+        },
         email :{
             type: String,
             required: true,
@@ -23,15 +30,9 @@ const UserSchema = new mongoose.Schema(
         password :{
             type: String,
             required: true,
-            min:5,
+            min:3,
         },
-        role : {
-            type: String,
-            enum: ['learner', 'moderator', 'admin'], 
-            default:"learner",
-            required : true,
-        },
-        passwordResetCode: {
+        verificationCode: {
             type: String,
             default: null
           }
