@@ -1,7 +1,6 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
 import User from "../models/user.js"
-import CourseProgress from "../models/progress.js";
 
 // REGISTERING USER
 
@@ -10,14 +9,15 @@ export const register = async (req, res) => {
         const {
             firstName,
             lastName,
+            userName,
             email,
-            password,
-            role
+            password
         } = req.body;
-        console.log(req.body)
+        // console.log(req.body)
         let oldUser = await User.findOne({ email: email });
-        if (oldUser) {
-            throw new Error("Email already exist");
+        let oldUser2 = await User.findOne({ userName: userName });
+        if (oldUser || oldUser2) {
+            throw new Error("Email or user already exist");
         }
         const salt = await bcrypt.genSalt(10)
         const passwordHash = await bcrypt.hash(password, salt)
@@ -25,16 +25,13 @@ export const register = async (req, res) => {
         const newUser = new User({
             firstName,
             lastName,
+            userName,
             email,
             password: passwordHash,
             role
         })
 
-        const savedUser = await newUser.save();
-        const newCourseProgress = new CourseProgress(
-          {userId: savedUser._id}
-        )
-        newCourseProgress.save();
+        const savedUser = await newUser.save();        
         console.log("A user signed up")
         res.status(201).json(savedUser);
     } catch (err) {
