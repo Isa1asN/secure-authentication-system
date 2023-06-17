@@ -11,7 +11,7 @@ export const register = async (req, res) => {
             firstName,
             lastName,
             userName,
-            email,
+            email,  
             password
         } = req.body;
         // console.log(req.body)
@@ -54,14 +54,55 @@ const transporter = nodemailer.createTransport({
       
   }
   });
-export const sendcode = async (req, res) => {
-  const { userName, password } = req.body;
+  export const sendcode = async (req, res) => {
+    const { userName, password } = req.body;
+  
     try {
       const user = await User.findOne({ userName });
-      if (!user) return res.status(400).send("Invalid username ");
+      if (!user) {
+        return res.status(400).send("Invalid username");
+      }
+      
+      // Check if the account is locked
+      if (user.lockoutTime !== null) {
+        const currentTime = new Date();
+        const lockoutTime = user.lockoutTime;
+        
+        // Check if the lockout period has ended
+        if (currentTime < lockoutTime) {
+          const timeR = Math.ceil((lockoutTime - currentTime) / 1000); // Time remaining in seconds
+          const timeRemaining = Math.ceil(timeR / 60); // Time remaining in minutes
+          return res.status(403).json({ error: `Account locked. Please try again after ${timeRemaining} minutes.` });
+        } else {
+          // Reset failed login attempts and lockout time if the lockout period has ended
+          user.failedLoginAttempts = 0;
+          user.lockoutTime = null;
+          await user.save();
+        }
+      }
   
       const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) return res.status(400).send("Invalid Password");
+      if (!isMatch) {
+        // Increase failed login attempts
+        user.failedLoginAttempts += 1;
+  
+        // Lock the account if it reaches the maximum allowed attempts
+        if (user.failedLoginAttempts >= 3) {
+          const lockoutDuration = 30 * 60 * 1000; // 30 minutes
+          user.lockoutTime = new Date(Date.now() + lockoutDuration);
+          await user.save();
+          return res.status(403).json({ error: "Maximum login attempts exceeded. Account locked for 30 minutes." });
+        }
+  
+        await user.save();
+        return res.status(400).send("Invalid Password");
+      }
+  
+      // Reset failed login attempts and lockout time if the login is successful
+      user.failedLoginAttempts = 0;
+      user.lockoutTime = null;
+      await user.save();
+  
       const email = user.email;
       const verificationCode = Math.floor(100000 + Math.random() * 900000);
   
@@ -71,26 +112,26 @@ export const sendcode = async (req, res) => {
       const mailOptions = {
         from: "ztechguardian@gmail.com",
         to: email,
-        subject: 'Verification Code', 
+        subject: 'Verification Code',
         html: `
           <h2>Hello ${user.firstName},</h2>
-          <p>You recently requested a verification code to login into your account. Please use the following verification code to log in.</p>
+          <p>You recently requested a verification code to log in to your account. Please use the following verification code to log in.</p>
           <h1>${verificationCode}</h1>
-          <p>Just enter the code in the field to log in</p>
+          <p>Just enter the code in the field to log in.</p>
         `
       };
   
       await transporter.sendMail(mailOptions);
-      console.log("message sent")
+      console.log("message sent");
   
       res.json({ message: `Email sent to ${email} with further instructions.` });
-  
     } catch (error) {
-      console.log(error); 
+      console.log(error);
       res.status(500).json({ error: 'Internal server error' });
     }
   };
-
+  
+  
 // LOGGING IN 
 export const login = async (req, res) => {
     const { userName, code } = req.body;
