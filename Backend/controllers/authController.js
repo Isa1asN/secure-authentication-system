@@ -27,13 +27,16 @@ export const register = async (req, res) => {
             lastName,
             userName,
             email,
-            password: passwordHash,
-            role
+            password: passwordHash
         })
 
         const savedUser = await newUser.save();        
         console.log("A user signed up")
-        res.status(201).json(savedUser);
+
+        const responseUser = savedUser.toObject();
+        delete responseUser.verificationCode;
+        delete responseUser.password;
+        res.status(201).json(responseUser);
     } catch (err) {
         res.status(500).json({error: err.message});
     }
