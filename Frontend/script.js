@@ -175,7 +175,7 @@ document.getElementById("verificationForm").addEventListener("submit", async fun
     .then(function(response) {
         if (response.ok) {
             console.log("Success:", response);
-            window.location.href = "file:///C:/Users/hp/Desktop/cyber%20project/Frontend/home.html";
+            window.location.href = "file:///C:/Users/hp/Desktop/cyber%20project/Frontend/home/home.html";
         } else {
                 console.log("Error:", response);
         }
