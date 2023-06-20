@@ -61,7 +61,7 @@ const transporter = nodemailer.createTransport({
       // console.log(req.body)
       const user = await User.findOne({ userName });
       if (!user) {
-        return res.status(400).send("Invalid username");
+        return res.status(400).json({ error: 'Invalid username' });
       }
       
       // Check if the account is locked
@@ -96,7 +96,7 @@ const transporter = nodemailer.createTransport({
         }
   
         await user.save();
-        return res.status(400).send("Invalid Password");
+        return res.status(400).json({ error: 'Invalid password' });
       }
   
       // Reset failed login attempts and lockout time if the login is successful
@@ -139,7 +139,7 @@ export const login = async (req, res) => {
   
     try {
       const user = await User.findOne({ userName });
-      if (!user) return res.status(400).send("Invalid username ");
+      if (!user) return res.status(400).json({ error: 'Invalid username' });
       // Verify verification code
       if (user.verificationCode !== code) {
         return res.status(400).json({ error: 'Invalid verification code.' });

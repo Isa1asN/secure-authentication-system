@@ -75,18 +75,44 @@
   </div>
 
   <script>
-    document.getElementById("verificationForm").addEventListener("submit", function(event) {
-      event.preventDefault(); // Prevent form submission
-      
-      // Get the entered verification code
-      var verificationCode = document.getElementById("verificationCode").value;
-      
-      // Perform any desired action with the verification code here
-      console.log("Verification Code:", verificationCode);
-      
-      // Reset the form
-      this.reset();
+    
+document.getElementById("verificationForm").addEventListener("submit", async function(event) {
+    event.preventDefault(); // Prevent the default form submission
+    
+    var code = document.getElementById("verificationCode").value;
+    var uName = sessionStorage.getItem('userName');
+    var userName = uName.toString();
+    sessionStorage.removeItem('userName');
+    
+    var data = {
+        userName: userName,
+        code: code
+    };
+    
+    // Send a POST request to the server
+    await fetch(`http://localhost:3005/auth/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+    .then(function(response) {
+        if (response.ok) {
+            console.log("Success:", response);
+            return response.json(); 
+        } else {
+                console.log("Error:", response);
+        }
+    }).then(function(r) {
+          console.log(r);
+          window.location.replace = "file:///C:/Users/hp/Desktop/cyber%20project/Frontend/home/home.html";
+})
+    .catch(function(error) {
+        console.log("Error:", error);
     });
+    }
+    );
   </script>
 </body>
 </html>

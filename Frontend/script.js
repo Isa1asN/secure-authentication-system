@@ -4,6 +4,7 @@ var reg = document.getElementById("register");
 var btn = document.getElementById("btn");
 var box = document.querySelector(".form_box");
 var loginToggleBtn = document.getElementById("login_toggle_btn");
+var msgtxt = document.getElementById("msgtxt");
 
 function register(){
     log.style.left = "-40rem";
@@ -77,6 +78,8 @@ document.getElementById("login").addEventListener("submit", async function(event
   // Get the form input values
   var userName = document.getElementById("userName").value;
   var password = document.getElementById("login_password_input").value;
+  sessionStorage.setItem('userName', userName);
+
 
   // Create an object with the form data
   var data = {
@@ -84,35 +87,39 @@ document.getElementById("login").addEventListener("submit", async function(event
       password: password
   };
 
- await fetch("http://localhost:3005/auth/sendcode", {
-      method: "POST",
-      headers: {
-          "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-  })
-  .then(function(response) {
-  if (response.ok) {
-    console.log("Success:", response);
-    return response.json(); 
-  } else {
-    console.log("Error:", response);
-    throw new Error("Request failed");
-  }
+await fetch("http://localhost:3005/auth/sendcode", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify(data)
+})
+.then(function(response) {
+    if (response.ok) {
+        console.log("Success:", response);
+        return response.json(); 
+    } else {
+        console.log("Error:", response);
+        return response.json().then(function(d) {
+            msgtxt.innerHTML = d.error;
+            throw new Error(d.error);
+        });
+    }
 })
 .then(function(r) {
-  var message = r.message;
-  console.log("Message:", message);
-  window.location.href = "file:///C:/Users/hp/Desktop/cyber%20project/Frontend/verifyCode.html";
-  window.alert(message);
+    var message = r.message;
+    console.log("Message:", message);
+    window.location.href = "file:///C:/Users/hp/Desktop/cyber%20project/Frontend/verifyCode.html";
+    window.alert(message);
 })
 .catch(function(error) {
-  console.log("Error:", error);
-})});
+    console.log("Error:", error);
+});
+});
 
 
 
-//todo Register Form Submit
+//todo Register Form Submit ###################################################################
 document.getElementById("register").addEventListener("submit", async function(event) {
   event.preventDefault(); // Prevent the default form submission
 
@@ -152,36 +159,3 @@ document.getElementById("register").addEventListener("submit", async function(ev
   });
 });
 
-
-// todo verify code form submit
-document.getElementById("verificationForm").addEventListener("submit", async function(event) {
-    event.preventDefault(); // Prevent the default form submission
-    
-    var code = document.getElementById("verificationCode").value;
-    
-    var data = {
-        userName: userName,
-        code: code
-    };
-    
-    // Send a POST request to the server
-    await fetch(`http://localhost:3005/auth/login`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify(data)
-    })
-    .then(function(response) {
-        if (response.ok) {
-            console.log("Success:", response);
-            window.location.href = "file:///C:/Users/hp/Desktop/cyber%20project/Frontend/home/home.html";
-        } else {
-                console.log("Error:", response);
-        }
-    })
-    .catch(function(error) {
-        console.log("Error:", error);
-    });
-    }
-    );
