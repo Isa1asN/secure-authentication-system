@@ -10,6 +10,22 @@
     left: 50%;
     transform: translateX(-50%);
   }
+  #logout{
+    color: #ffffff;
+    background: rgb(255, 0, 0);
+    height: 35px;
+    width: 80px;
+    border-radius: 8px;
+    position: absolute;
+    top: 450px;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  #logout:hover{
+    background: rgb(252, 252, 252);
+    color: red;
+    cursor: pointer;
+  }
   body{
     background-color: #102037;
     overflow: hidden;

@@ -71,6 +71,7 @@ function toggleLoginPasswordVisibility() {
 
 // todo ###################################################################
 
+const baseUrl = "http://localhost:3005/auth";
 
 // Login Form Submit
 document.getElementById("login").addEventListener("submit", async function(event) {
@@ -87,7 +88,7 @@ document.getElementById("login").addEventListener("submit", async function(event
       password: password
   };
 
-await fetch("http://localhost:3005/auth/sendcode", {
+await fetch(`${baseUrl}/sendcode`, {
     method: "POST",
     headers: {
         "Content-Type": "application/json"
@@ -138,7 +139,7 @@ document.getElementById("register").addEventListener("submit", async function(ev
   };
 
   // Send a POST request to the server
-  await fetch(`http://localhost:3005/auth/register`, {
+  await fetch(`${baseUrl}/register`, {
       method: "POST",
       headers: {
           "Content-Type": "application/json"

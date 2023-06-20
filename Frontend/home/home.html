@@ -10,7 +10,7 @@
 </head>
 <body>
 
-  <h1 id="wel">Welcome to the HomePage!</h1>
+  <h1 id="wel">Welcome to the HomePage</h1>
     <div class="box-of-star1">
         <div class="star star-position1"></div>
         <div class="star star-position2"></div>
@@ -58,5 +58,11 @@
         <div class="leg leg-right"></div>
         <div class="schoolbag"></div>
       </div>
+      <button id="logout" onclick="window.location.replace('file:///C:/Users/hp/Desktop/cyber%20project/Frontend/index.html')">Logout</button>
 </body>
+<script>
+  var userName = sessionStorage.getItem('userName');
+var welcomeElement = document.getElementById('wel');
+welcomeElement.innerHTML = `Welcome to the HomePage ${userName}`;
+</script>
 </html>

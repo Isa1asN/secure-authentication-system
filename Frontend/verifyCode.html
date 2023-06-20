@@ -56,6 +56,10 @@
       border-radius: 4px;
       cursor: pointer;
     }
+    #msgtxt{
+      color: red;
+      text-align: center;
+    }
     
     .submit-btn:hover {
       background-color: #0056b3;
@@ -70,11 +74,16 @@
         <label for="verificationCode">Verification Code:</label>
         <input type="text" id="verificationCode" name="verificationCode" pattern="[0-9]+" required>
       </div>
+      <h4 id="msgtxt"></h4>
       <button type="submit" class="submit-btn">Submit</button>
     </form>
   </div>
 
   <script>
+
+    var msgtxt = document.getElementById("msgtxt");
+    const baseUrl = "http://localhost:3005/auth";
+
     
 document.getElementById("verificationForm").addEventListener("submit", async function(event) {
     event.preventDefault(); // Prevent the default form submission
@@ -82,7 +91,6 @@ document.getElementById("verificationForm").addEventListener("submit", async fun
     var code = document.getElementById("verificationCode").value;
     var uName = sessionStorage.getItem('userName');
     var userName = uName.toString();
-    sessionStorage.removeItem('userName');
     
     var data = {
         userName: userName,
@@ -90,7 +98,7 @@ document.getElementById("verificationForm").addEventListener("submit", async fun
     };
     
     // Send a POST request to the server
-    await fetch(`http://localhost:3005/auth/login`, {
+    await fetch(`${baseUrl}/login`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -103,10 +111,15 @@ document.getElementById("verificationForm").addEventListener("submit", async fun
             return response.json(); 
         } else {
                 console.log("Error:", response);
+                return response.json().then(function(d) {
+            msgtxt.innerHTML = d.error;
+            throw new Error(d.error);
+        });
         }
     }).then(function(r) {
           console.log(r);
-          window.location.replace = "file:///C:/Users/hp/Desktop/cyber%20project/Frontend/home/home.html";
+          window.location.replace("file:///C:/Users/hp/Desktop/cyber%20project/Frontend/home/home.html");
+
 })
     .catch(function(error) {
         console.log("Error:", error);
