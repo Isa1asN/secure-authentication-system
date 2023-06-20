@@ -36,7 +36,35 @@ const submitBtns = document.querySelectorAll('.submit_btn');
             },1000);
         })
     })
-
+function togglePasswordVisibility() {
+        var passwordInput = document.getElementById("password_input");
+        var showBtn = document.getElementById("showbtn");
+    
+        if (passwordInput.type === "password") {
+            passwordInput.type = "text";
+            showBtn.classList.remove("fa-eye");
+            showBtn.classList.add("fa-eye-slash");
+        } else {
+            passwordInput.type = "password";
+            showBtn.classList.remove("fa-eye-slash");
+            showBtn.classList.add("fa-eye");
+        }
+    }
+function toggleLoginPasswordVisibility() {
+        var loginPasswordInput = document.getElementById("login_password_input");
+        var loginShowBtn = document.getElementById("login_showbtn");
+    
+        if (loginPasswordInput.type === "password") {
+            loginPasswordInput.type = "text";
+            loginShowBtn.classList.remove("fa-eye");
+            loginShowBtn.classList.add("fa-eye-slash");
+        } else {
+            loginPasswordInput.type = "password";
+            loginShowBtn.classList.remove("fa-eye-slash");
+            loginShowBtn.classList.add("fa-eye");
+        }
+    }
+    
 
 //Submit
 let regiterBtn = document.getElementById("submit_btn");
@@ -62,6 +90,8 @@ function closeerrorPopup(){
 
 
 // todo ###################################################################
+
+
 // Login Form Submit
 document.getElementById("login").addEventListener("submit", function(event) {
   event.preventDefault(); // Prevent the default form submission
@@ -103,14 +133,12 @@ document.getElementById("login").addEventListener("submit", function(event) {
 document.getElementById("register").addEventListener("submit", function(event) {
   event.preventDefault(); // Prevent the default form submission
 
-  // Get the form input values
   var firstName = document.getElementById("first_name_input").value;
   var lastName = document.getElementById("last_name_input").value;
   var userName = document.getElementById("user_name_input").value;
   var email = document.getElementById("email_input").value;
   var password = document.getElementById("password_input").value;
 
-  // Create an object with the form data
   var data = {
       firstName: firstName,
       lastName: lastName,
@@ -120,7 +148,7 @@ document.getElementById("register").addEventListener("submit", function(event) {
   };
 
   // Send a POST request to the server
-  fetch("/register", {
+   fetch(`http://localhost:3005/auth/register`, {
       method: "POST",
       headers: {
           "Content-Type": "application/json"
@@ -129,15 +157,12 @@ document.getElementById("register").addEventListener("submit", function(event) {
   })
   .then(function(response) {
       if (response.ok) {
-          // Handle successful registration
-          // Redirect or display success message
+          console.log("Success:", response);
       } else {
-          // Handle failed registration
-          // Display error message
+            console.log("Error:", response);
       }
   })
   .catch(function(error) {
-      // Handle network errors
       console.log("Error:", error);
   });
 });

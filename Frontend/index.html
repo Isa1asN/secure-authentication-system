@@ -34,9 +34,13 @@
                     <label for="" class="form_label">User Name</label>
                 </div>
                 <div class="form_div">
-                    <input type="password" class="form_input" placeholder=" " autocomplete="off" required>
-                    <label for="" class="form_label">Password</label>
-                </div>
+                    <input type="password" id="login_password_input" class="form_input" placeholder=" " autocomplete="off" required>
+                    <label for="login_password_input" class="form_label">Password</label>
+                    <!-- Password Hide & Show Icon -->
+                    <span class="showbtn" onclick="toggleLoginPasswordVisibility()">
+                        <i id="login_showbtn" class="fa-solid fa-eye"></i>
+                    </span>
+                </div>                
                 <input type="checkbox" class="checkbox"><span class="check_text">Remember Password</span>
                 <button type="submit" class="submit_btn">Log in</button>
             </form>
@@ -64,17 +68,14 @@
                     <span id="email_error" class="hide danger-color error-msg">Invalid Email</span>
                     <span id="email_empty" class="hide danger-color error-msg">Email Can not Be Empty</span>
                 <div class="form_div">
-                    <input type="password" id="password_input" class="form_input" onkeyup="passwordvalidation(this.value)" placeholder=" " autocomplete="off" required>
-                    <label for="password_input" class="form_label">Password</label>
-                    <!---------------  Password Hide & Show Icon  --------------------->
-                    <span class="showbtn"><i id="showbtn" class="fa-solid fa-eye"></i></ion-icon></span>
+                        <input type="password" id="password_input" class="form_input" placeholder=" " autocomplete="off" required>
+                        <label for="password_input" class="form_label">Password</label>
+                        <!-- Password Hide & Show Icon -->
+                        <span class="showbtn" onclick="togglePasswordVisibility()">
+                            <i id="showbtn" class="fa-solid fa-eye"></i>
+                        </span>
                 </div>
-                    <span id="password_error" class="hide danger-color error-msg">Password Should Have Letters, Special Symbols & Numbers</span>
-                    <span id="password_empty" class="hide danger-color error-msg">Password Can not Be Empty</span>
-                    <!---------------  Password Validation  --------------------->
-                   
-                    <!---------------  End Password Validation  --------------------->
-                
+                    
                 <button type="submit" id="submit_btn" class="submit_btn">Register</button>              
             </form>
             <!---------------  End Register Form --------------------->
