@@ -102,7 +102,7 @@ const transporter = nodemailer.createTransport({
       user.failedLoginAttempts = 0;
       user.lockoutTime = null;
       await user.save();
-  
+   
       const email = user.email;
       const verificationCode = Math.floor(100000 + Math.random() * 900000);
   
