@@ -18,7 +18,7 @@
             <!---------------  Toggle Buttons For Login & Register Form --------------------->
             <div class="btn_box">
                 <div id="btn"></div>
-                <button type="button" class="toggle_btn" onclick="login()">Log in</button>
+                <button type="button" id="login_toggle_btn" class="toggle_btn" onclick="login()">Log in</button>
                 <button type="button" class="toggle_btn" onclick="register()">Register</button>
             </div>
             <!---------------  Social Icons --------------------->
@@ -30,7 +30,7 @@
             <!---------------  Login Form --------------------->
             <form id="login" class="input_group">
                 <div class="form_div">
-                    <input type="text" class="form_input" placeholder=" " autocomplete="off" required>
+                    <input type="text" id="userName" class="form_input" placeholder=" " autocomplete="off" required>
                     <label for="" class="form_label">User Name</label>
                 </div>
                 <div class="form_div">
@@ -76,7 +76,7 @@
                         </span>
                 </div>
                     
-                <button type="submit" id="submit_btn" class="submit_btn">Register</button>              
+                <button type="submit" id="submit_btn"  class="submit_btn">Register</button>              
             </form>
             <!---------------  End Register Form --------------------->
         </div>

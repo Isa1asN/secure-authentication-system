@@ -58,6 +58,7 @@ const transporter = nodemailer.createTransport({
     const { userName, password } = req.body;
   
     try {
+      // console.log(req.body)
       const user = await User.findOne({ userName });
       if (!user) {
         return res.status(400).send("Invalid username");

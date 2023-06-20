@@ -3,6 +3,7 @@ var log = document.getElementById("login");
 var reg = document.getElementById("register");
 var btn = document.getElementById("btn");
 var box = document.querySelector(".form_box");
+var loginToggleBtn = document.getElementById("login_toggle_btn");
 
 function register(){
     log.style.left = "-40rem";
@@ -66,28 +67,6 @@ function toggleLoginPasswordVisibility() {
     }
     
 
-//Submit
-let regiterBtn = document.getElementById("submit_btn");
-
-let Valpopup = document.getElementById("Valpopup");
-let errorpopup = document.getElementById("errorpopup");
-
-function showvalPopup(){
-  Valpopup.classList.add("open_popup");
-};
-function showerrorPopup(){
-  errorpopup.classList.add("open_popup");
-};
-function closevalPopup(){
-  Valpopup.classList.remove("open_popup");
-  window.location.reload();
-};
-function closeerrorPopup(){
-  errorpopup.classList.remove("open_popup");
-};
-
-/* --------------- End Success & Error Popup --------------------- */  
-
 
 // todo ###################################################################
 
@@ -95,19 +74,18 @@ function closeerrorPopup(){
 // Login Form Submit
 document.getElementById("login").addEventListener("submit", function(event) {
   event.preventDefault(); // Prevent the default form submission
-
   // Get the form input values
   var userName = document.getElementById("userName").value;
-  var password = document.getElementById("password").value;
+  var password = document.getElementById("login_password_input").value;
 
   // Create an object with the form data
   var data = {
-      username: userName,
+      userName: userName,
       password: password
   };
 
   // Send a POST request to the server
-  fetch("/login", {
+  fetch("http://localhost:3005/auth/sendcode", {
       method: "POST",
       headers: {
           "Content-Type": "application/json"
@@ -116,15 +94,13 @@ document.getElementById("login").addEventListener("submit", function(event) {
   })
   .then(function(response) {
       if (response.ok) {
-          // Handle successful login
-          // Redirect or display success message
+        console.log("Success:", response);
+        
       } else {
-          // Handle failed login
-          // Display error message
+        console.log("Error:", response);
       }
   })
   .catch(function(error) {
-      // Handle network errors
       console.log("Error:", error);
   });
 });
@@ -158,6 +134,8 @@ document.getElementById("register").addEventListener("submit", function(event) {
   .then(function(response) {
       if (response.ok) {
           console.log("Success:", response);
+          loginToggleBtn.click();
+
       } else {
             console.log("Error:", response);
       }
