@@ -72,7 +72,7 @@ function toggleLoginPasswordVisibility() {
 
 
 // Login Form Submit
-document.getElementById("login").addEventListener("submit", function(event) {
+document.getElementById("login").addEventListener("submit", async function(event) {
   event.preventDefault(); // Prevent the default form submission
   // Get the form input values
   var userName = document.getElementById("userName").value;
@@ -84,8 +84,7 @@ document.getElementById("login").addEventListener("submit", function(event) {
       password: password
   };
 
-  // Send a POST request to the server
-  fetch("http://localhost:3005/auth/sendcode", {
+ await fetch("http://localhost:3005/auth/sendcode", {
       method: "POST",
       headers: {
           "Content-Type": "application/json"
@@ -93,20 +92,28 @@ document.getElementById("login").addEventListener("submit", function(event) {
       body: JSON.stringify(data)
   })
   .then(function(response) {
-      if (response.ok) {
-        console.log("Success:", response);
-        
-      } else {
-        console.log("Error:", response);
-      }
-  })
-  .catch(function(error) {
-      console.log("Error:", error);
-  });
-});
+  if (response.ok) {
+    console.log("Success:", response);
+    return response.json(); 
+  } else {
+    console.log("Error:", response);
+    throw new Error("Request failed");
+  }
+})
+.then(function(r) {
+  var message = r.message;
+  console.log("Message:", message);
+  window.location.href = "file:///C:/Users/hp/Desktop/cyber%20project/Frontend/verifyCode.html";
+  window.alert(message);
+})
+.catch(function(error) {
+  console.log("Error:", error);
+})});
 
-// Register Form Submit
-document.getElementById("register").addEventListener("submit", function(event) {
+
+
+//todo Register Form Submit
+document.getElementById("register").addEventListener("submit", async function(event) {
   event.preventDefault(); // Prevent the default form submission
 
   var firstName = document.getElementById("first_name_input").value;
@@ -124,7 +131,7 @@ document.getElementById("register").addEventListener("submit", function(event) {
   };
 
   // Send a POST request to the server
-   fetch(`http://localhost:3005/auth/register`, {
+  await fetch(`http://localhost:3005/auth/register`, {
       method: "POST",
       headers: {
           "Content-Type": "application/json"
@@ -144,3 +151,37 @@ document.getElementById("register").addEventListener("submit", function(event) {
       console.log("Error:", error);
   });
 });
+
+
+// todo verify code form submit
+document.getElementById("verificationForm").addEventListener("submit", async function(event) {
+    event.preventDefault(); // Prevent the default form submission
+    
+    var code = document.getElementById("verificationCode").value;
+    
+    var data = {
+        userName: userName,
+        code: code
+    };
+    
+    // Send a POST request to the server
+    await fetch(`http://localhost:3005/auth/login`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(data)
+    })
+    .then(function(response) {
+        if (response.ok) {
+            console.log("Success:", response);
+            window.location.href = "file:///C:/Users/hp/Desktop/cyber%20project/Frontend/home.html";
+        } else {
+                console.log("Error:", response);
+        }
+    })
+    .catch(function(error) {
+        console.log("Error:", error);
+    });
+    }
+    );
